@@ -1,0 +1,26 @@
+%dw 2.0
+
+type auto_d886cb12_4d93_44f3_b654_fa6ed1090b9a_Input_Payload = {
+  orderData: {
+    signatureRequiredFlag: Boolean, 
+    shipInstructions: String, 
+    giftWrapMessage: String, 
+    subTotal: Number, 
+    giftWrapFlag: Boolean, 
+    poNumber: String, 
+    currencyCode: String, 
+    _?: Any
+  }, 
+  items: Array<{    quantity: Number,     size: String,     id: String,     category: String,     _?: Any  }>, 
+  customer: {
+    firstName: String, 
+    lastName: String, 
+    address: String, 
+    phoneNumber: String, 
+    orderId: String, 
+    email: String, 
+    _?: Any
+  }, 
+  _?: Any
+}
+

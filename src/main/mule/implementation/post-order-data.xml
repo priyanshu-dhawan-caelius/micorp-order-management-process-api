@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="post-order-data-sub-flows" doc:id="d886cb12-4d93-44f3-b654-fa6ed1090b9a" >
+		<logger level="INFO" doc:name="Start" doc:id="9fdb6633-8ae6-4e31-81ea-d595b5ead3d1" message='#[{"Flow has started":flow.name,&#10;    correlationId: vars.correlationId&#10;}]'/>
+		<set-variable value="payload.order.PONumber" doc:name="PONumber" doc:id="f664025a-6929-40d4-a840-752d66f3b5a3" variableName="PONumber"/>
+		<logger level="INFO" doc:name="Check Payload" doc:id="84643be4-f152-48f2-9ca1-513395786ba2" />
+		<ee:transform doc:name="creating-variables : CustomerData,ItemData,OrderData">
+            <ee:message>
+            </ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="itemData" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.items]]></ee:set-variable>
+				<ee:set-variable variableName="customerData" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.customer]]></ee:set-variable>
+				<ee:set-variable variableName="orderData" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.orderData
+]]></ee:set-variable>
+			</ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="create-orders" doc:id="55c404a2-d6de-4ac6-8bad-7022fadfb435" name="create-orders-sub-flows"/>
+		<flow-ref doc:name="create-customers" doc:id="8180e27b-599a-492d-8475-4958a9e044be" name="create-customers-sub-flows"/>
+		<flow-ref doc:name="create-item" doc:id="7b50a182-e637-46b2-959b-f420e9da7cfb" name="create-items-sub-flows"/>
+		<logger level="INFO" doc:name="End" doc:id="8c802f5e-ccfc-47a1-8ba4-30c3c576d729" message='#[{"Flow has ended":flow.name,&#10;    correlationId: vars.correlationId&#10;}]'/>
+	</sub-flow>
+</mule>

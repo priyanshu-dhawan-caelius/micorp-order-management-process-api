@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="create-items-sub-flows" doc:id="a824905b-3a28-4dc1-9745-434e875e5c24" >
+		<logger level="INFO" doc:name="Start" doc:id="d41191f3-dd12-42e9-a9e3-6610f6fa470e" message='#[{"Flow has ended":flow.name,&#10;    correlationId: vars.correlationId&#10;}]'/>
+		<foreach doc:name="For Each" doc:id="c803fd64-10bb-4315-b52f-92f94795ea1f" collection="#[vars.itemData]">
+			<ee:transform doc:name="Adding-orderId" doc:id="21ca21bf-e619-42e7-985f-8fdc35fa485d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload ++ {orderId: vars.orderId}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<http:request method="POST" doc:name="Create-Items" doc:id="32f6f0c5-4d3e-4e35-9452-6b808ced9f0d" path="/item" config-ref="HTTP_Request_configuration">
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	client_secret : 123,
+	client_id : 123
+}]]]></http:headers>
+			</http:request>
+		</foreach>
+		<logger level="INFO" doc:name="End" doc:id="59dadd86-8a1d-46c2-a718-97d42053f436" message='#["End of flow " ++ flow.name]' />
+	</sub-flow>
+</mule>

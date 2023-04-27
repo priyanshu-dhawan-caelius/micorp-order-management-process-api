@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="create-orders-sub-flows" doc:id="8225ea65-7fce-4f2e-ad15-542e5fddc666" >
+		<logger level="INFO" doc:name="Start" doc:id="f48bb583-2c01-462b-b956-e277fa38129f" message='#[{"Flow has started":flow.name,&#10;    correlationId: vars.correlationId&#10;}]'/>
+		<http:request method="POST" doc:name="Create-Orders" doc:id="8052f2f5-3f5f-49ba-afcc-d5aef50636c2" path="/order" config-ref="HTTP_Request_configuration">
+			<http:body ><![CDATA[#[vars.orderData]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	client_secret : 123,
+	client_id : 123
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Check Payload" doc:id="747b9a42-fb90-42f1-86eb-abec898a67ab" message="#[payload]"/>
+		<set-variable value="#[payload.items.id[0]]" doc:name="orderId" doc:id="caba64cb-2c90-4164-8c3b-eaee1bcde337" variableName="orderId"/>
+		<logger level="INFO" doc:name="End" doc:id="9cc7305a-dc3b-475d-8b1b-f0ce4d75f4fa" message='#[{"Flow has ended":flow.name,&#10;    correlationId: vars.correlationId&#10;}]'/>
+	</sub-flow>
+</mule>

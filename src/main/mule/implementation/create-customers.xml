@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="create-customers-sub-flows" doc:id="c8c8573a-4cda-4dd5-abe2-d423dacaf70b" >
+		<logger level="INFO" doc:name="Start" doc:id="453978a7-bc44-4233-aab5-5a6f9d38b343" message='#[{"Flow has started":flow.name,&#10;    correlationId: vars.correlationId&#10;}]'/>
+		<ee:transform doc:name="Adding-orderId" doc:id="9ef9b1f5-c51b-4771-b554-83e7b755215c">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var customerData= vars.customerData
+---
+customerData - "address" ++ {
+   address: customerData.address.address1 ++" " ++ customerData.address.city ++" " ++ customerData.address.zipCode ++" " ++ customerData.address.country,
+   orderId: vars.orderId
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		<http:request method="POST" doc:name="Create-Customer" doc:id="44f3f566-39c9-41a0-8344-56e39b7a25f2" config-ref="HTTP_Request_configuration" path="/customer" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	client_secret : 123,
+	client_id : 123
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="End" doc:id="30d9b105-8376-427f-b049-e6f62a53ac26" message='#[{"Flow has ended":flow.name,&#10;    correlationId: vars.correlationId&#10;}]'/>
+	</sub-flow>
+</mule>
